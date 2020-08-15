@@ -1,0 +1,25 @@
+{
+  "name": "mavlink-openmct",
+  "version": "1.0.0",
+  "description": "A plugin to provide mavlink telemetry for OpenMCT",
+  "main": "mavlink-telemetry.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jackbeagley/mavlink-openmct.git"
+  },
+  "author": "Jack Beagley",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/jackbeagley/mavlink-openmct/issues"
+  },
+  "homepage": "https://github.com/jackbeagley/mavlink-openmct#readme",
+  "dependencies": {
+    "@ifrunistuttgart/node-mavlink": "^0.1.2"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.7"
+  }
+}
