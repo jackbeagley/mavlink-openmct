@@ -1,2 +1,4 @@
 node_modules
 *.xml
+assets
+telemetry-messages.json
