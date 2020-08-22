@@ -2,14 +2,18 @@ import mavlinkMessagesDict from './telemetry-messages.json'
 
 var objectProvider = {
     get: function (identifier) {
+        let object;
+
         if (identifier.key === 'craft') {
-            return Promise.resolve({
+            object = {
                 identifier: identifier,
                 name: mavlinkMessagesDict.name,
                 type: 'folder',
                 location: 'ROOT'
-            })
+            };
         }
+
+        return Promise.resolve(object)
         }
     };
 
