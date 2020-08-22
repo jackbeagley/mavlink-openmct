@@ -1,0 +1,3 @@
+[submodule "mavlink"]
+	path = pymavlink
+	url = https://github.com/mavlink/mavlink.git
