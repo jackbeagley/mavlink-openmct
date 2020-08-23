@@ -90,6 +90,12 @@ export default function () {
         openmct.composition.addProvider(groupCompositionProvider);
         openmct.composition.addProvider(rootCompositionProvider);
 
+        openmct.types.addType('mavlink.telemetry', {
+            name: 'Mavlink Telemetry Point',
+            description: 'Telemetry coming from a Mavlink source.',
+            cssClass: 'icon-telemetry'
+        });
+
         var provider = {
             supportsSubscribe: function (domainObject) {
                 return domainObject.type === "mavlink.telemetry";
