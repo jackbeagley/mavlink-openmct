@@ -25,7 +25,7 @@ messageRegistry.forEach(message =>
                 measurements: messageObj._message_fields.map(field => 
                     {
                         let messageName = field[0]
-                        let messageKey = group_key + '_' + messageName.toLowerCase();
+                        let messageKey = group_key + '.' + messageName.toLowerCase();
                         let messageFormat = (field[1] === 'float') ? 'float' : 'integer'
 
                         return {
