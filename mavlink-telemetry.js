@@ -1,5 +1,8 @@
 import mavlinkMessagesDict from './telemetry-messages.json'
 
+const socketProtocol = (window.location.protocol === 'https:' ? 'wss:' : 'ws:')
+const echoSocketUrl = socketProtocol + '//' + window.location.hostname + ':8080/mavlink-ws'
+
 var groupCompositionProvider = {
     appliesTo: function (domainObject) {
         return domainObject.identifier.namespace === 'mavlink.taxonomy' &&
@@ -38,6 +41,8 @@ var objectProvider = {
     get: function (identifier) {
         let object;
 
+        console.log(identifier.key)
+
         if (identifier.key === 'craft') {
             object = {
                 identifier: identifier,
@@ -58,6 +63,7 @@ var objectProvider = {
                     location: 'mavlink.taxonomy:craft'
                 };
             } else {
+                // console.log(identifierKeyComponents);
                 const identifierMessageField = identifierMessage.measurements.filter((message) => {return message.key === identifier.key})[0];
 
                 object = {
@@ -72,7 +78,7 @@ var objectProvider = {
             }
         }
 
-        console.log(object)
+        // console.log(object)
 
         return Promise.resolve(object)
     }
@@ -96,13 +102,23 @@ export default function () {
             cssClass: 'icon-telemetry'
         });
 
+        const socket = new WebSocket(echoSocketUrl)
+
         var provider = {
             supportsSubscribe: function (domainObject) {
                 return domainObject.type === "mavlink.telemetry";
             },
             subscribe: function (domainObject, callback) {
+                let subscribeRequest = {
+                    action: 'subscribe',
+                    message: domainObject.identifier.key
+                }
+
+                socket.send(subscribeRequest);
 
             }
         }
+
+        openmct.telemetry.addProvider(provider);
     };
 }
