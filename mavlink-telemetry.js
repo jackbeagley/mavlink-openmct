@@ -41,7 +41,7 @@ var objectProvider = {
     get: function (identifier) {
         let object;
 
-        console.log(identifier.key)
+        // console.log(identifier.key)
 
         if (identifier.key === 'craft') {
             object = {
@@ -53,9 +53,18 @@ var objectProvider = {
         } else {
             const identifierKeyComponents = identifier.key.split('.');
 
-            const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => {return group.key === identifierKeyComponents[0]})[0];
-
             if (identifierKeyComponents.length == 1) {
+                const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => {return group.key === identifierKeyComponents[0]})[0];
+
+                object = {
+                    identifier: identifier,
+                    name: identifierMessage.name,
+                    type: 'folder',
+                    location: 'mavlink.taxonomy:craft'
+                };
+            } else if (identifierKeyComponents[0] === "craft") {
+                const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => {return group.key === identifierKeyComponents[1]})[0];
+
                 object = {
                     identifier: identifier,
                     name: identifierMessage.name,
@@ -63,6 +72,7 @@ var objectProvider = {
                     location: 'mavlink.taxonomy:craft'
                 };
             } else {
+                const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => {return group.key === identifierKeyComponents[0]})[0];
                 // console.log(identifierKeyComponents);
                 const identifierMessageField = identifierMessage.measurements.filter((message) => {return message.key === identifier.key})[0];
 
@@ -104,18 +114,40 @@ export default function () {
 
         const socket = new WebSocket(echoSocketUrl)
 
+        var subscriberCallbacks = {};
+
+        socket.onmessage = function (event) {
+            let telemetryMessage = JSON.parse(event.data);
+
+            // console.log(telemetryMessage)
+
+            if (subscriberCallbacks[telemetryMessage.key]) {
+                subscriberCallbacks[telemetryMessage.key](telemetryMessage)
+            }
+        }
+
         var provider = {
             supportsSubscribe: function (domainObject) {
                 return domainObject.type === "mavlink.telemetry";
             },
             subscribe: function (domainObject, callback) {
+                subscriberCallbacks[domainObject.identifier.key] = callback;
+                
                 let subscribeRequest = {
                     action: 'subscribe',
                     message: domainObject.identifier.key
                 }
 
-                socket.send(subscribeRequest);
+                let unsubscribeRequest = {
+                    action: 'unsubscribe',
+                    message: domainObject.identifier.key
+                }
 
+                socket.send(JSON.stringify(subscribeRequest));
+
+                return function unsubscribe() {
+                    socket.send(JSON.stringify(unsubscribeRequest));
+                }
             }
         }
 
