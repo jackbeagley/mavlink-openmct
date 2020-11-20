@@ -1,6 +1,6 @@
 {
   "name": "mavlink-openmct",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A plugin to provide mavlink telemetry for OpenMCT",
   "main": "mavlink-telemetry.js",
   "scripts": {
