@@ -22,6 +22,6 @@
     "node-mavlink": "npm:@ifrunistuttgart/node-mavlink@^0.1.2"
   },
   "devDependencies": {
-    "typescript": "^3.9.7"
+    "typescript": "npm:typescript@^4.1.2"
   }
 }
