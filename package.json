@@ -19,9 +19,8 @@
   "dependencies": {
     "@ifrunistuttgart/node-mavlink": "^0.1.2",
     "express-ws": "^4.0.0",
-    "node-mavlink": "npm:@ifrunistuttgart/node-mavlink@^0.1.2"
-  },
-  "devDependencies": {
+    "node-mavlink": "npm:@ifrunistuttgart/node-mavlink@^0.1.2",
     "typescript": "npm:typescript@^4.1.2"
-  }
+  },
+  "devDependencies": {}
 }
