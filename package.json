@@ -19,8 +19,10 @@
   "homepage": "https://github.com/jackbeagley/mavlink-openmct#readme",
   "dependencies": {
     "@ifrunistuttgart/node-mavlink": "^0.1.2",
+    "express": "^4.17.1",
     "express-ws": "^4.0.0",
-    "prompt-sync": "^4.2.0"
+    "prompt-sync": "^4.2.0",
+    "serialport": "^9.0.2"
   },
   "devDependencies": {
     "typescript": "^3.9.7"

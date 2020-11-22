@@ -1,7 +1,8 @@
+var path = require('path');
 var expressWS = require('express-ws');
 
 var SerialPort = require('serialport');
-var messageRegistry = require('../assets/message-registry');
+var messageRegistry = require(path.resolve(__dirname, '../assets/message-registry'));
 var mavlink = require('node-mavlink');
 
 function install(app) {
