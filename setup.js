@@ -27,6 +27,11 @@ execSync("echo %%PYTHONPATH%%", options);
 //console.log(output)
 
 execSync("py -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 " + mavlinkXML, options)
+
+execSync("npx tsc -p assets")
+
+execSync("node json-generator.js")
+
 //let output = exec("set PYTHONPATH=%cd%\pymavlink && echo PYTHONPATH for pymavlink set to: %PYTHONPATH% && mkdir assets & py -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 telemetry.xml && node ./node_modules/typescript/bin/tsc -p assets && node json-generator.js")
 
 //console.log(output)
