@@ -11,7 +11,7 @@ var groupCompositionProvider = {
     load: function (domainObject) {
         const identifierKeyComponents = domainObject.identifier.key.split('.');
 
-        const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => {return group.key === identifierKeyComponents[0]})[0];
+        const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => { return group.key === identifierKeyComponents[0] })[0];
 
         return Promise.resolve(identifierMessage.measurements.map((message) => {
             return {
@@ -54,7 +54,7 @@ var objectProvider = {
             const identifierKeyComponents = identifier.key.split('.');
 
             if (identifierKeyComponents.length == 1) {
-                const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => {return group.key === identifierKeyComponents[0]})[0];
+                const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => { return group.key === identifierKeyComponents[0] })[0];
 
                 object = {
                     identifier: identifier,
@@ -63,7 +63,7 @@ var objectProvider = {
                     location: 'mavlink.taxonomy:craft'
                 };
             } else if (identifierKeyComponents[0] === "craft") {
-                const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => {return group.key === identifierKeyComponents[1]})[0];
+                const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => { return group.key === identifierKeyComponents[1] })[0];
 
                 object = {
                     identifier: identifier,
@@ -72,9 +72,9 @@ var objectProvider = {
                     location: 'mavlink.taxonomy:craft'
                 };
             } else {
-                const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => {return group.key === identifierKeyComponents[0]})[0];
+                const identifierMessage = mavlinkMessagesDict.telemetryGroups.filter((group) => { return group.key === identifierKeyComponents[0] })[0];
                 // console.log(identifierKeyComponents);
-                const identifierMessageField = identifierMessage.measurements.filter((message) => {return message.key === identifier.key})[0];
+                const identifierMessageField = identifierMessage.measurements.filter((message) => { return message.key === identifier.key })[0];
 
                 object = {
                     identifier: identifier,
@@ -115,11 +115,16 @@ export default function () {
         const socket = new WebSocket(echoSocketUrl)
 
         var subscriberCallbacks = {};
+        var subscribeQueue = [];
+
+        socket.onopen = () => {
+            subscribeQueue.forEach((subscribeObject => {
+                socket.send(subscribeObject);
+            }))
+        }
 
         socket.onmessage = function (event) {
             let telemetryMessage = JSON.parse(event.data);
-
-            // console.log(telemetryMessage)
 
             if (subscriberCallbacks[telemetryMessage.key]) {
                 subscriberCallbacks[telemetryMessage.key](telemetryMessage)
@@ -132,7 +137,7 @@ export default function () {
             },
             subscribe: function (domainObject, callback) {
                 subscriberCallbacks[domainObject.identifier.key] = callback;
-                
+
                 let subscribeRequest = {
                     action: 'subscribe',
                     message: domainObject.identifier.key
@@ -143,7 +148,13 @@ export default function () {
                     message: domainObject.identifier.key
                 }
 
-                socket.send(JSON.stringify(subscribeRequest));
+                let subscribeObject = JSON.stringify(subscribeRequest);
+
+                if (socket.readyState === WebSocket.OPEN) {
+                    socket.send(subscribeObject);
+                } else {
+                    subscribeQueue.push(subscribeObject);
+                }
 
                 return function unsubscribe() {
                     socket.send(JSON.stringify(unsubscribeRequest));
