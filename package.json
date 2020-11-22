@@ -1,6 +1,6 @@
 {
   "name": "mavlink-openmct",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A plugin to provide mavlink telemetry for OpenMCT",
   "main": "mavlink-telemetry.js",
   "scripts": {
@@ -18,13 +18,12 @@
   },
   "homepage": "https://github.com/jackbeagley/mavlink-openmct#readme",
   "dependencies": {
-    "@ifrunistuttgart/node-mavlink": "^0.1.2",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "prompt-sync": "^4.2.0",
-    "serialport": "^9.0.2"
+    "serialport": "^9.0.2",
+    "node-mavlink": "npm:@ifrunistuttgart/node-mavlink@^0.1.2",
+    "typescript": "npm:typescript@^4.1.2"
   },
-  "devDependencies": {
-    "typescript": "^3.9.7"
-  }
+  "devDependencies": {}
 }

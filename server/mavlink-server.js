@@ -35,7 +35,6 @@ function install(app) {
 
     mavlinkParser.on('message', function (message) {
         // event listener for all messages  
-        //   console.log(message);  \
         let utcTime = new Date().getTime()
 
         mavlinkSubscriptions.forEach(
@@ -43,10 +42,11 @@ function install(app) {
                 if (mavlinkDataClients[clientIndex].readyState === 1) {
 
                     clientSubscriptions.forEach((subscribedMessage) => {
+
                         let messageNameComponents = subscribedMessage.split('.');
 
                         if (messageNameComponents[0].toUpperCase() === message._message_name) {
-                            // console.log(utcTime)
+                            
                             let messageJSON = {
                                 'timestamp': utcTime,
                                 'value': message[messageNameComponents[1].toUpperCase()],
