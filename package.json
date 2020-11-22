@@ -4,7 +4,8 @@
   "description": "A plugin to provide mavlink telemetry for OpenMCT",
   "main": "mavlink-telemetry.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "postinstall": "node setup.js"
   },
   "repository": {
     "type": "git",
@@ -18,7 +19,8 @@
   "homepage": "https://github.com/jackbeagley/mavlink-openmct#readme",
   "dependencies": {
     "@ifrunistuttgart/node-mavlink": "^0.1.2",
-    "express-ws": "^4.0.0"
+    "express-ws": "^4.0.0",
+    "prompt-sync": "^4.2.0"
   },
   "devDependencies": {
     "typescript": "^3.9.7"
