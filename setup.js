@@ -26,7 +26,7 @@ execSync("echo %%PYTHONPATH%%", options);
 
 //console.log(output)
 
-execSync("py -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 " + mavlinkXML, options)
+execSync("python -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 " + mavlinkXML, options)
 
 execSync("npx tsc -p assets")
 
