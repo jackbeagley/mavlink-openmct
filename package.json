@@ -18,11 +18,12 @@
   },
   "homepage": "https://github.com/jackbeagley/mavlink-openmct#readme",
   "dependencies": {
+    "dgram": "^1.0.1",
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
+    "node-mavlink": "npm:@ifrunistuttgart/node-mavlink@^0.1.2",
     "prompt-sync": "^4.2.0",
     "serialport": "^9.0.2",
-    "node-mavlink": "npm:@ifrunistuttgart/node-mavlink@^0.1.2",
     "typescript": "npm:typescript@^4.1.2"
   },
   "devDependencies": {}

@@ -1,10 +1,13 @@
 const fs = require('fs');
 const { execSync } = require("child_process");
 const prompt = require('prompt-sync')({sigint: true});
+const os = require('os');
 
 let pythonPath = __dirname + '/pymavlink';
 
-process.env.PYTHONPATH = pythonPath
+console.log(process.env.PYTHONPATH)
+
+process.env.PYTHONPATH = process.env.PYTHONPATH + ':' + pythonPath
 
 let options = {
     stdio: [null, process.stdout, process.stderr],
@@ -26,7 +29,11 @@ execSync("echo %%PYTHONPATH%%", options);
 
 //console.log(output)
 
-execSync("python -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 " + mavlinkXML, options)
+if (os.platform() === 'win32') {
+    execSync("py -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 " + mavlinkXML, options)
+} else {
+    execSync("python -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 " + mavlinkXML, options)
+}
 
 execSync("npx tsc -p assets")
 

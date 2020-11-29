@@ -2,19 +2,50 @@ var path = require('path');
 var expressWS = require('express-ws');
 
 var SerialPort = require('serialport');
+var dgram = require('dgram');
 var messageRegistry = require(path.resolve(__dirname, '../assets/message-registry'));
 var mavlink = require('node-mavlink');
 
-function install(app) {
+function install(app, config = {
+    source: {
+        type: 'udp',
+        address: '0.0.0.0',
+        port: 8765
+    }
+}) {
     // console.log(messageRegistry);
     var mavlinkParser = new mavlink.MAVLinkModule(messageRegistry.messageRegistry);
 
-    /**
-     * Setup serial port
-     */
-    var serialPort = new SerialPort('COM6', {
-        baudRate: 115200
-    });
+
+    if (config.type === "serial") {
+        /**
+         * Setup serial port
+         */
+        var serialPort = new SerialPort(config.port, {
+            baudRate: config.baud
+        });
+
+        serialPort.on('data', function (data) {
+            mavlinkParser.parse(data);
+        });
+    } else if (config.type === "udp") {
+        /**
+         * Set the UDP socket
+         */
+        const udpServer = dgram.createSocket('udp4');
+
+        udpServer.on('message', (msg, rinfo) => {
+            console.log(msg);
+        })
+
+        udpServer.on('listening', () => {
+            const address = udpServer.address();
+
+            console.log('UDP server listening ${address.address}:${address.port}');
+        })
+
+        udpServer.bind(config.port);
+    }
 
     expressWS(app);
 
@@ -24,10 +55,6 @@ function install(app) {
     let mavlinkSubscriptions = [];
 
     console.log('Setting up MAVLINK websocket server')
-
-    serialPort.on('data', function (data) {
-        mavlinkParser.parse(data);
-    });
 
     mavlinkParser.on('error', function (e) {
         console.log(e);
@@ -46,7 +73,7 @@ function install(app) {
                         let messageNameComponents = subscribedMessage.split('.');
 
                         if (messageNameComponents[0].toUpperCase() === message._message_name) {
-                            
+
                             let messageJSON = {
                                 'timestamp': utcTime,
                                 'value': message[messageNameComponents[1].toUpperCase()],
