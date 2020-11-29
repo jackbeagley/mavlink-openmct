@@ -32,7 +32,7 @@ execSync("echo %%PYTHONPATH%%", options);
 if (os.platform() === 'win32') {
     execSync("py -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 " + mavlinkXML, options)
 } else {
-    execSync("python -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 " + mavlinkXML, options)
+    execSync("python3 -m pymavlink.tools.mavgen -o ./assets --lang TypeScript --wire-protocol 2.0 " + mavlinkXML, options)
 }
 
 execSync("npx tsc -p assets")
