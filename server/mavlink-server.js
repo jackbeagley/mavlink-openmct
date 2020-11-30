@@ -72,7 +72,7 @@ function install(app, config = {
 
                         let messageNameComponents = subscribedMessage.split('.');
 
-                        if (messageNameComponents[0].toUpperCase() === message._message_name) {
+                        if ((messageNameComponents[0].toUpperCase() === message._message_name) || (subscribedMessage === "subscribeAll")) {
 
                             let messageJSON = {
                                 'timestamp': utcTime,
@@ -121,6 +121,12 @@ function install(app, config = {
 
                 if (messageSubscriptionIndex !== -1) {
                     mavlinkSubscriptions[clientIndex].splice(messageSubscriptionIndex, 1);
+
+                    console.log(mavlinkSubscriptions)
+                }
+            } else if (messageAction === "subscribeAll") {
+                if (mavlinkSubscriptions[clientIndex].indexOf("subscribeAll") === -1) {
+                    mavlinkSubscriptions[clientIndex].push("subscribeAll");
 
                     console.log(mavlinkSubscriptions)
                 }
