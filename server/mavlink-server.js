@@ -35,7 +35,7 @@ function install(app, config = {
         const udpServer = dgram.createSocket('udp4');
 
         udpServer.on('message', (msg, rinfo) => {
-            console.log(msg);
+            mavlinkParser.parse(msg);
         })
 
         udpServer.on('listening', () => {
