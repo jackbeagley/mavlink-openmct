@@ -94,74 +94,75 @@ var objectProvider = {
     }
 };
 
-export default function () {
-    return function install(openmct) {
-        openmct.objects.addRoot({
-            namespace: 'mavlink.taxonomy',
-            key: 'craft'
-        });
+function install(openmct) {
+	openmct.objects.addRoot({
+		namespace: 'mavlink.taxonomy',
+		key: 'craft'
+	});
 
-        openmct.objects.addProvider('mavlink.taxonomy', objectProvider);
+	openmct.objects.addProvider('mavlink.taxonomy', objectProvider);
 
-        openmct.composition.addProvider(groupCompositionProvider);
-        openmct.composition.addProvider(rootCompositionProvider);
+	openmct.composition.addProvider(groupCompositionProvider);
+	openmct.composition.addProvider(rootCompositionProvider);
 
-        openmct.types.addType('mavlink.telemetry', {
-            name: 'Mavlink Telemetry Point',
-            description: 'Telemetry coming from a Mavlink source.',
-            cssClass: 'icon-telemetry'
-        });
+	openmct.types.addType('mavlink.telemetry', {
+		name: 'Mavlink Telemetry Point',
+		description: 'Telemetry coming from a Mavlink source.',
+		cssClass: 'icon-telemetry'
+	});
 
-        const socket = new WebSocket(echoSocketUrl)
+	const socket = new WebSocket(echoSocketUrl)
 
-        var subscriberCallbacks = {};
-        var subscribeQueue = [];
+	var subscriberCallbacks = {};
+	var subscribeQueue = [];
 
-        socket.onopen = () => {
-            subscribeQueue.forEach((subscribeObject => {
-                socket.send(subscribeObject);
-            }))
-        }
+	socket.onopen = () => {
+		subscribeQueue.forEach((subscribeObject => {
+			socket.send(subscribeObject);
+		}))
+	}
 
-        socket.onmessage = function (event) {
-            let telemetryMessage = JSON.parse(event.data);
+	socket.onmessage = function (event) {
+		let telemetryMessage = JSON.parse(event.data);
 
-            if (subscriberCallbacks[telemetryMessage.key]) {
-                subscriberCallbacks[telemetryMessage.key](telemetryMessage)
-            }
-        }
+		if (subscriberCallbacks[telemetryMessage.key]) {
+			subscriberCallbacks[telemetryMessage.key](telemetryMessage)
+		}
+	}
 
-        var provider = {
-            supportsSubscribe: function (domainObject) {
-                return domainObject.type === "mavlink.telemetry";
-            },
-            subscribe: function (domainObject, callback) {
-                subscriberCallbacks[domainObject.identifier.key] = callback;
+	var provider = {
+		supportsSubscribe: function (domainObject) {
+			return domainObject.type === "mavlink.telemetry";
+		},
+		subscribe: function (domainObject, callback) {
+			subscriberCallbacks[domainObject.identifier.key] = callback;
 
-                let subscribeRequest = {
-                    action: 'subscribe',
-                    message: domainObject.identifier.key
-                }
+			let subscribeRequest = {
+				action: 'subscribe',
+				message: domainObject.identifier.key
+			}
 
-                let unsubscribeRequest = {
-                    action: 'unsubscribe',
-                    message: domainObject.identifier.key
-                }
+			let unsubscribeRequest = {
+				action: 'unsubscribe',
+				message: domainObject.identifier.key
+			}
 
-                let subscribeObject = JSON.stringify(subscribeRequest);
+			let subscribeObject = JSON.stringify(subscribeRequest);
 
-                if (socket.readyState === WebSocket.OPEN) {
-                    socket.send(subscribeObject);
-                } else {
-                    subscribeQueue.push(subscribeObject);
-                }
+			if (socket.readyState === WebSocket.OPEN) {
+				socket.send(subscribeObject);
+			} else {
+				subscribeQueue.push(subscribeObject);
+			}
 
-                return function unsubscribe() {
-                    socket.send(JSON.stringify(unsubscribeRequest));
-                }
-            }
-        }
+			return function unsubscribe() {
+				socket.send(JSON.stringify(unsubscribeRequest));
+			}
+		}
+	}
 
-        openmct.telemetry.addProvider(provider);
-    };
-}
+	openmct.telemetry.addProvider(provider);
+};
+
+
+export { install, mavlinkMessagesDict as messages };
